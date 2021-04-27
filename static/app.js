@@ -1,8 +1,6 @@
 
 d3.json("samples.json").then((data) => {
 
-    // var names = data.names;
-
     console.log(data)
     var samples = data.samples;
     console.log(samples)
@@ -12,15 +10,19 @@ d3.json("samples.json").then((data) => {
     otuLabels = [];
     subjectIDs = [];
 
-    samples.forEach(function (sample) {
+    var sortedValues = samples.sort((a, b) => b.sample_values - a.sample_values);
+    
+
+    sortedValues.forEach(function (sample) {
 
         sampleValues.push(sample.sample_values);
         otuIDs.push(sample.otu_ids);
         otuLabels.push(sample.otu_labels);
         subjectIDs.push(sample.id);
     });
-    console.log(subjectIDs)
+    console.log(sortedValues)
 
+    //Populate dropdown menu with IDs
     var select = document.getElementById("selDataset");
 
     for(var i = 0; i < subjectIDs.length; i++) {
@@ -34,18 +36,30 @@ d3.json("samples.json").then((data) => {
         select.add(el);
     }
 
-    var selectedID = subjectIDs.filter(subject => subject === opt);
+    
+    // top10OTUs = sortedValues.slice(0, 10);
 
-// console.log(otuIDs)
-// console.log(sampleValues)
-// console.log(otuLabels)
-    // sliced = 
-    // var trace1 = {
-    //     x: sampleValues,
-    //     y: otu,
-    //     text: reversedData.map(object => object.greekName),
-    //     name: "Greek",
+    //     var trace1 = {
+    //     x: top10OTUs.map(object => object.sample_values),
+    //     y: top10OTUs.map(object => object.otu_ids),
+    //     text: top10OTUs.map(object => object.otu_labels),
+    //     name: "OTUs",
     //     type: "bar",
     //     orientation: "h"
     //   };
+
+    //   var data = [trace1];
+
+    //   Plotly.newPlot("bar", data);
+
 });
+
+function optionChanged(id) {
+    var dropdownMenu = d3.select("#selDataset");
+
+    var selectedID = dropdownMenu.property("value");
+
+    dropdownMenu.on("optionChanged", console.log(selectedID));
+};
+
+optionChanged();
