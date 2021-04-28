@@ -84,8 +84,17 @@ function ShowMetaData(sampleID) {
         var trimmedArray = meta.filter(s => s.id.toString() === sampleID);
         var result = trimmedArray[0];
 
+        select = d3.select("#sample-metadata");
+        select.html("");
+        Object.entries(result).forEach(function([key, value]) {
+            if (!!value) {
+            select.append("p").append("strong").text(`${key}: ${value}`);
+            }
+            else {
+                select.append("p").append("strong").text(`*${key} not given`);
+            };
+        });
     });
-
 }
 
 function initDashboard() {
