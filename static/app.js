@@ -33,17 +33,10 @@ function buildBarGraph(sampleID) {
         Plotly.newPlot("bar", barArray, barLayout);
     });
 }
-//Create a bubble chart that displays each sample.
-// Use otu_ids for the x values.
-// Use sample_values for the y values.
-// Use sample_values for the marker size.
-// Use otu_ids for the marker colors.
-// Use otu_labels for the text values.
 
 function buildBubbleChart(sampleID) {
 
     d3.json("samples.json").then(data => {
-        console.log(data)
 
         var samples = data.samples;
         var trimmedArray = samples.filter(s => s.id === sampleID);
@@ -70,7 +63,6 @@ function buildBubbleChart(sampleID) {
           
           var layout = {
             showlegend: false,
-            // autosize: true,
             xaxis: {
                 title: "OTU ID",
                 
@@ -87,7 +79,11 @@ function buildBubbleChart(sampleID) {
 function ShowMetaData(sampleID) {
 
     d3.json("samples.json").then(data => {
-    
+
+        var meta = data.metadata;
+        var trimmedArray = meta.filter(s => s.id.toString() === sampleID);
+        var result = trimmedArray[0];
+
     });
 
 }
@@ -120,7 +116,7 @@ function initDashboard() {
         };
         buildBarGraph(initID);
         buildBubbleChart(initID);
-        // ShowMetaData(initID);
+        ShowMetaData(initID);
     });
 }
 
@@ -131,5 +127,5 @@ function optionChanged(newID) {
     // var selectedID = dropdownMenu.property("value");
     buildBarGraph(newID);
     buildBubbleChart(newID);
-    // ShowMetaData(newID);
+    ShowMetaData(newID);
 }
