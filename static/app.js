@@ -1,14 +1,13 @@
 
+// Build Bar Graph
 function buildBarGraph(sampleID) {
-
-    // Build Bar Graph
     // This comes from office hours with Dom
     d3.json("samples.json").then(data => {
 
         var samples = data.samples;
         var trimmedArray = samples.filter(s => s.id === sampleID);
         var result = trimmedArray[0];
-    
+
         var otu_ids = result.otu_ids;
         var otu_labels = result.otu_labels;
         var sample_values = result.sample_values;
@@ -25,15 +24,18 @@ function buildBarGraph(sampleID) {
 
         var barLayout = {
             title: "Top 10 Bacteria Species Found",
-            margin: {t: 30, l: 150}
+            margin: { t: 30, l: 150 }
         }
 
         var barArray = [barData];
 
-        Plotly.newPlot("bar", barArray, barLayout);
+        var config = { responsive: true }
+
+        Plotly.newPlot("bar", barArray, barLayout, config);
     });
 }
 
+// Build bubble chart
 function buildBubbleChart(sampleID) {
 
     d3.json("samples.json").then(data => {
@@ -41,7 +43,7 @@ function buildBubbleChart(sampleID) {
         var samples = data.samples;
         var trimmedArray = samples.filter(s => s.id === sampleID);
         var result = trimmedArray[0];
-    
+
         var otu_ids = result.otu_ids;
         var otu_labels = result.otu_labels;
         var sample_values = result.sample_values;
@@ -49,33 +51,33 @@ function buildBubbleChart(sampleID) {
         var trace1 = {
             x: otu_ids,
             y: sample_values,
-            text: otu_labels, 
+            text: otu_labels,
             mode: 'markers',
             autosize: true,
             marker: {
-              color: otu_ids,
-              opacity: [1, 0.8, 0.6, 0.4],
-              size: sample_values
+                color: otu_ids,
+                opacity: [1, 0.8, 0.6, 0.4],
+                size: sample_values,
             }
-          };
-          
-          var data = [trace1];
-          
-          var layout = {
+        };
+
+        var data = [trace1];
+
+        var layout = {
             showlegend: false,
             xaxis: {
                 title: "OTU ID",
-                
             }
-          };
+        };
 
-          
-          
-          Plotly.newPlot('bubble', data, layout);   
-    
+        var config = { responsive: true }
+
+        Plotly.newPlot('bubble', data, layout, config);
+
     });
 }
 
+// Populate Demographic Info panel and handle null values
 function ShowMetaData(sampleID) {
 
     d3.json("samples.json").then(data => {
@@ -85,18 +87,20 @@ function ShowMetaData(sampleID) {
         var result = trimmedArray[0];
 
         select = d3.select("#sample-metadata");
-        select.html("");
-        Object.entries(result).forEach(function([key, value]) {
+        select.html(""); // clear panel before re-populating
+
+        Object.entries(result).forEach(function ([key, value]) {
             if (!!value) {
-            select.append("p").append("strong").text(`${key}: ${value}`);
+                select.append("p").append("strong").text(`${key}: ${value}`);
             }
             else {
-                select.append("p").append("strong").text(`*${key} not given`);
+                select.append("p").append("strong").text(`**${key} not given`);
             };
         });
     });
 }
 
+// Initialize dashboard
 function initDashboard() {
 
     d3.json("samples.json").then(data => {
@@ -115,13 +119,13 @@ function initDashboard() {
 
         for (var i = 0; i < subjectIDs.length; i++) {
 
-            var opt = subjectIDs[i];
+            var id = subjectIDs[i];
 
-            var el = document.createElement("option");
-            el.text = opt;
-            el.value = opt;
+            var option = document.createElement("option");
+            option.text = id;
+            option.value = id;
 
-            select.add(el);
+            select.add(option);
         };
         buildBarGraph(initID);
         buildBubbleChart(initID);
@@ -131,9 +135,9 @@ function initDashboard() {
 
 initDashboard();
 
+// Function to handle changes in dropdown menu
 function optionChanged(newID) {
-    // var dropdownMenu = d3.select("#selDataset");
-    // var selectedID = dropdownMenu.property("value");
+
     buildBarGraph(newID);
     buildBubbleChart(newID);
     ShowMetaData(newID);
