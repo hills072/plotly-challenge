@@ -13,7 +13,7 @@ function buildBarGraph(sampleID) {
         var otu_labels = result.otu_labels;
         var sample_values = result.sample_values;
 
-        yticks = otu_ids.slice(0, 10).map(otuID => `OTU ${otuID}`);
+        yticks = otu_ids.slice(0, 10).map(otuID => `OTU ${otuID}`).reverse();
 
         var barData = {
             x: sample_values.slice(0, 10).reverse(),
