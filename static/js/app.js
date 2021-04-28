@@ -1,4 +1,4 @@
-
+console.log("loaded app.js");
 // Build Bar Graph
 function buildBarGraph(sampleID) {
     // This comes from office hours with Dom
