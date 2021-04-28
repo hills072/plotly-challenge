@@ -1,65 +1,85 @@
 
-d3.json("samples.json").then((data) => {
+function buildBarGraph(sampleID) {
 
-    console.log(data)
-    var samples = data.samples;
-    console.log(samples)
+    // Build Bar Graph
+    // This comes from office hours with Dom
+    d3.json("samples.json").then(data => {
 
-    otuIDs = [];
-    sampleValues = [];
-    otuLabels = [];
-    subjectIDs = [];
-
-    var sortedValues = samples.sort((a, b) => b.sample_values - a.sample_values);
+        var samples = data.samples;
+        var trimmedArray = samples.filter(s => s.id === sampleID);
+        var result = trimmedArray[0];
     
+        var otu_ids = result.otu_ids;
+        var otu_labels = result.otu_labels;
+        var sample_values = result.sample_values;
 
-    sortedValues.forEach(function (sample) {
+        yticks = otu_ids.slice(0, 10).map(otuID => `OTU ${otuID}`);
 
-        sampleValues.push(sample.sample_values);
-        otuIDs.push(sample.otu_ids);
-        otuLabels.push(sample.otu_labels);
-        subjectIDs.push(sample.id);
+        var barData = {
+            x: sample_values.slice(0, 10).reverse(),
+            y: yticks,
+            type: "bar",
+            text: otu_labels.slice(0, 10).reverse(),
+            orientation: "h"
+        }
+
+        var barLayout = {
+            title: "Top 10 Bacteria Species Found",
+            margin: {t: 30, l: 150}
+        }
+
+        var barArray = [barData];
+
+        Plotly.newPlot("bar", barArray, barLayout);
     });
-    console.log(sortedValues)
+}
 
-    //Populate dropdown menu with IDs
-    var select = document.getElementById("selDataset");
+function buildBubbleChart(sampleID) {
 
-    for(var i = 0; i < subjectIDs.length; i++) {
-        
-        var opt = subjectIDs[i];
+}
 
-        var el = document.createElement("option");
-        el.text = opt;
-        el.value = opt;
+function ShowMetaData(sampleID) {
 
-        select.add(el);
-    }
+}
 
-    
-    // top10OTUs = sortedValues.slice(0, 10);
+function initDashboard() {
 
-    //     var trace1 = {
-    //     x: top10OTUs.map(object => object.sample_values),
-    //     y: top10OTUs.map(object => object.otu_ids),
-    //     text: top10OTUs.map(object => object.otu_labels),
-    //     name: "OTUs",
-    //     type: "bar",
-    //     orientation: "h"
-    //   };
+    d3.json("samples.json").then(data => {
 
-    //   var data = [trace1];
+        var samples = data.samples;
+        subjectIDs = [];
 
-    //   Plotly.newPlot("bar", data);
+        samples.forEach(function (sample) {
+            subjectIDs.push(sample.id);
+        });
 
-});
+        var initID = subjectIDs[0];
 
-function optionChanged(id) {
-    var dropdownMenu = d3.select("#selDataset");
+        //Populate dropdown menu with IDs
+        var select = document.getElementById("selDataset");
 
-    var selectedID = dropdownMenu.property("value");
+        for (var i = 0; i < subjectIDs.length; i++) {
 
-    dropdownMenu.on("optionChanged", console.log(selectedID));
-};
+            var opt = subjectIDs[i];
 
-optionChanged();
+            var el = document.createElement("option");
+            el.text = opt;
+            el.value = opt;
+
+            select.add(el);
+        };
+        buildBarGraph(initID);
+        buildBubbleChart(initID);
+        ShowMetaData(initID);
+    });
+}
+
+initDashboard();
+
+function optionChanged(newID) {
+    // var dropdownMenu = d3.select("#selDataset");
+    // var selectedID = dropdownMenu.property("value");
+    buildBarGraph(newID);
+    buildBubbleChart(newID);
+    ShowMetaData(newID);
+}
