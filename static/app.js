@@ -33,12 +33,62 @@ function buildBarGraph(sampleID) {
         Plotly.newPlot("bar", barArray, barLayout);
     });
 }
+//Create a bubble chart that displays each sample.
+// Use otu_ids for the x values.
+// Use sample_values for the y values.
+// Use sample_values for the marker size.
+// Use otu_ids for the marker colors.
+// Use otu_labels for the text values.
 
 function buildBubbleChart(sampleID) {
 
+    d3.json("samples.json").then(data => {
+        console.log(data)
+
+        var samples = data.samples;
+        var trimmedArray = samples.filter(s => s.id === sampleID);
+        var result = trimmedArray[0];
+    
+        var otu_ids = result.otu_ids;
+        var otu_labels = result.otu_labels;
+        var sample_values = result.sample_values;
+
+        var trace1 = {
+            x: otu_ids,
+            y: sample_values,
+            text: otu_labels, 
+            mode: 'markers',
+            autosize: true,
+            marker: {
+              color: otu_ids,
+              opacity: [1, 0.8, 0.6, 0.4],
+              size: sample_values
+            }
+          };
+          
+          var data = [trace1];
+          
+          var layout = {
+            showlegend: false,
+            // autosize: true,
+            xaxis: {
+                title: "OTU ID",
+                
+            }
+          };
+
+          
+          
+          Plotly.newPlot('bubble', data, layout);   
+    
+    });
 }
 
 function ShowMetaData(sampleID) {
+
+    d3.json("samples.json").then(data => {
+    
+    });
 
 }
 
@@ -70,7 +120,7 @@ function initDashboard() {
         };
         buildBarGraph(initID);
         buildBubbleChart(initID);
-        ShowMetaData(initID);
+        // ShowMetaData(initID);
     });
 }
 
@@ -81,5 +131,5 @@ function optionChanged(newID) {
     // var selectedID = dropdownMenu.property("value");
     buildBarGraph(newID);
     buildBubbleChart(newID);
-    ShowMetaData(newID);
+    // ShowMetaData(newID);
 }
