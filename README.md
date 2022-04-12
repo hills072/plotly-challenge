@@ -18,4 +18,4 @@ Utilize the D3 and Plot.ly Javascript libraries to explore and visualize the [Be
 
 5. Update all of the plots any time that a new sample is selected.
 
-6. Finally, build index.html to aesthetically deploy the data and its associated visualizations.
+6. Finally, build `index.html` to aesthetically deploy the data and its associated visualizations.
